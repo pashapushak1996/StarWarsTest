@@ -1,9 +1,9 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-import {Character} from '../../models/Character';
+import {CharacterModel} from '../../models/character.model';
 
 interface ICharactersState {
-  fans: Character[];
+  fans: CharacterModel[];
 }
 
 const initialState: ICharactersState = {

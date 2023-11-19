@@ -1,8 +1,8 @@
-import {Character, CharacterResponse} from '../models/Character';
+import {CharacterModel, CharacterResponse} from '../models/character.model';
 
 export const getCharactersByGender = (
   gender: 'female' | 'male' | 'others',
-  characters: Character[],
+  characters: CharacterModel[],
 ) =>
   characters.filter(character => {
     if (gender === 'others') {
@@ -12,7 +12,7 @@ export const getCharactersByGender = (
     return character.gender === gender;
   });
 
-export const normalizeCharacter = (character: CharacterResponse): Character => {
+export const normalizeCharacter = (character: CharacterResponse): CharacterModel => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {created, edited, url, homeworld, species, ...rest} = character;
 

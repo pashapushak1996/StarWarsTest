@@ -1,20 +1,18 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {Character, CharacterResponse} from '../../models/Character';
+import {CharacterModel, CharacterResponse} from '../../models/character.model';
 import {fetchAllPeoples} from './characters.thunk';
 import {normalizeCharacter} from '../../utils/characters.util';
 
 interface ICharacterState {
-  nextPage: boolean;
-  prevPage: boolean;
+  page: number;
   totalCount: number | null;
-  characters: Character[];
+  characters: CharacterModel[];
   error: null | any;
   loading: boolean;
 }
 
 const initialState: ICharacterState = {
-  nextPage: true,
-  prevPage: false,
+  page: 0,
   totalCount: null,
   characters: [],
   error: null,
@@ -25,7 +23,7 @@ export const charactersSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(fetchAllPeoples.fulfilled, (state, action) => {
-        const {next, previous, results, count} = action.payload;
+        const {results, count} = action.payload;
 
         state.loading = false;
 
@@ -35,8 +33,6 @@ export const charactersSlice = createSlice({
 
         state.characters = normalizedCharacters;
         state.totalCount = count;
-        state.nextPage = !!next;
-        state.prevPage = !!previous;
       })
       .addCase(fetchAllPeoples.pending, state => {
         state.loading = true;
@@ -48,7 +44,13 @@ export const charactersSlice = createSlice({
   },
   initialState,
   name: 'characters',
-  reducers: {},
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.page = action.payload;
+    },
+  },
 });
+
+export const {setCurrentPage} = charactersSlice.actions;
 
 export default charactersSlice.reducer;

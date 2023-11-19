@@ -1,5 +1,5 @@
 import {axiosBaseInstance} from '../configs/axios.config';
-import {HttpMethods} from '../constants/http-methods.constant';
+import {HttpMethods} from '../constants/http-methods.enum';
 
 export const apiHandler = (
   endpoint: string,

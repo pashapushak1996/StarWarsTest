@@ -17,7 +17,7 @@ export interface CharacterResponse {
   url: string;
 }
 
-export type Character = Omit<
+export type CharacterModel = Omit<
   CharacterResponse,
   'edited' | 'created' | 'url'
 > & {

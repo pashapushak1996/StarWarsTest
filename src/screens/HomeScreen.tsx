@@ -1,15 +1,20 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Button, Text, useTheme} from 'react-native-paper';
-import {useAppDispatch, useAppSelector} from '../hooks/redux.hook';
-import FansCard from '../components/FansCard';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import CharactersTable from '../components/characters-table/CharactersTable';
+
+import FansCard from '../components/FansCard';
+import {CharactersTable} from '../components/characters-table';
+
+import {useAppDispatch, useAppSelector} from '../hooks/redux.hook';
+
 import {getFansState} from '../redux/fans/fans.selector';
-import {getCharactersByGender} from '../utils/characters.util';
 import {clearFans} from '../redux/fans';
+
+import {getCharactersByGender} from '../utils/characters.util';
 
 export const HomeScreen = () => {
   const dispatch = useAppDispatch();
+  const {colors} = useTheme();
   const {fans} = useAppSelector(getFansState);
   const maleCharacters = getCharactersByGender('male', fans);
   const femaleCharacters = getCharactersByGender('female', fans);
@@ -18,8 +23,6 @@ export const HomeScreen = () => {
   const handleClearFans = () => {
     dispatch(clearFans());
   };
-
-  const {colors} = useTheme();
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,11 +1,12 @@
 import React from 'react';
 import {Avatar, Card, Paragraph, Title} from 'react-native-paper';
-import {Character} from '../models/Character';
 import {View} from 'react-native';
+
+import {CharacterModel} from '../models/character.model';
 import {generateImageUri} from '../utils/characters.util';
 
 interface CharacterCardProps {
-  character: Character | null;
+  character: CharacterModel | null;
 }
 
 const LeftContent = ({gender, size}: {gender: string; size: number}) => {

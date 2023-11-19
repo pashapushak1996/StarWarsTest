@@ -6,7 +6,7 @@ interface FansCardProps {
   type: 'Female' | 'Male' | 'Others';
 }
 
-const FansCard: React.FC<FansCardProps> = ({type = 'Female', count = 25}) => {
+const FansCard: React.FC<FansCardProps> = ({type, count}) => {
   const subtitleText = type !== 'Others' ? `${type} Fans` : type;
   return (
     <Card style={{flex: 1}}>

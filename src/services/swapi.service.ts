@@ -1,5 +1,5 @@
 import {apiHandler} from '../utils/api.util';
-import {HttpMethods} from '../constants/http-methods.constant';
+import {HttpMethods} from '../constants/http-methods.enum';
 
 export const swapiService = {
   getCharacters: async ({page = 1, searchValue = ''}) => {

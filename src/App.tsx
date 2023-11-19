@@ -9,16 +9,19 @@ import React from 'react';
 import {Provider} from 'react-redux';
 import {Provider as PaperProvider} from 'react-native-paper';
 
-import {store} from './redux/store';
-import {MainNavigator} from './navigators/main.navigator';
+import {persistor, store} from './redux/store';
+import {MainNavigator} from './navigation/main.navigator';
 import theme from './themes/theme';
+import {PersistGate} from 'redux-persist/integration/react';
 
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
-      <PaperProvider theme={theme}>
-        <MainNavigator />
-      </PaperProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <PaperProvider theme={theme}>
+          <MainNavigator />
+        </PaperProvider>
+      </PersistGate>
     </Provider>
   );
 }

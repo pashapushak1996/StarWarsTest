@@ -4,28 +4,34 @@ import {
   DataTable,
   IconButton,
   Searchbar,
+  Text,
 } from 'react-native-paper';
 import {StyleSheet} from 'react-native';
-import {Character} from '../../models/Character';
-import TableRow from './TableRow';
-import {useAppDispatch, useAppSelector} from '../../hooks/redux.hook';
-import {addFun} from '../../redux/fans';
-import {fetchAllPeoples, getCharactersState} from '../../redux/characters';
 import {useEffect, useMemo, useState} from 'react';
 import debounce from 'lodash/debounce';
 import {useNavigation} from '@react-navigation/native';
 
+import {CharacterModel} from '../../models/character.model';
+import TableRow from './TableRow';
+import {useAppDispatch, useAppSelector} from '../../hooks/redux.hook';
+
+import {addFun} from '../../redux/fans';
+import {fetchAllPeoples, getCharactersState} from '../../redux/characters';
+import {setCurrentPage} from '../../redux/characters/characters.slice';
+
 interface CharactersTableProps {
-  fans: Character[];
+  fans: CharacterModel[];
 }
 
-const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
-  const {loading, characters, totalCount} = useAppSelector(getCharactersState);
-  const [searchValue, setSearchValue] = useState('');
+export const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
   const dispatch = useAppDispatch();
-  const [page, setPage] = React.useState<number>(0);
-  const [localLoading, setLocalLoading] = useState(true);
   const navigation = useNavigation();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+
+  const {loading, characters, totalCount, page} =
+    useAppSelector(getCharactersState);
+
+  const [searchValue, setSearchValue] = useState('');
 
   const handleClickCharacter = (characterId: string) => {
     navigation.navigate('CharacterDetails' as never, {characterId} as never);
@@ -50,18 +56,50 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
     () =>
       debounce((value: string) => {
         dispatch(fetchAllPeoples({page: page + 1, searchValue: value}));
-        setLocalLoading(false);
       }, 700),
-    [dispatch, page],
+    [dispatch],
   );
 
   useEffect(() => {
-    setPage(0);
-  }, [totalCount]);
+    debouncedFetchAllPeoples(searchValue);
+  }, [searchValue]);
 
   useEffect(() => {
-    debouncedFetchAllPeoples(searchValue);
-  }, [debouncedFetchAllPeoples, searchValue]);
+    dispatch(fetchAllPeoples({page: page + 1, searchValue: searchValue}));
+  }, [page]);
+
+  useEffect(() => {
+    dispatch(setCurrentPage(0));
+  }, [totalCount]);
+
+  const sortedCharacters = sortOrder
+    ? [...characters].sort((a, b) => {
+        if (a.name < b.name) {
+          return sortOrder === 'asc' ? -1 : 1;
+        }
+        if (a.name > b.name) {
+          return sortOrder === 'asc' ? 1 : -1;
+        }
+        return 0;
+      })
+    : [...characters];
+
+  const handleClickSort = () => {
+    setSortOrder(prevState =>
+      prevState === undefined || prevState === 'desc' ? 'asc' : 'desc',
+    );
+  };
+
+  const getSortIcon = (sortingOrder: string | null) => {
+    switch (sortingOrder) {
+      case 'asc':
+        return 'arrow-up-left-bold';
+      case 'desc':
+        return 'arrow-down-left-bold';
+      default:
+        return 'arrow-collapse';
+    }
+  };
 
   return (
     <DataTable>
@@ -75,11 +113,18 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
         <DataTable.Title>
           <IconButton icon={'heart'} size={15} />
         </DataTable.Title>
+        <DataTable.Title>
+          <IconButton
+            onPress={handleClickSort}
+            icon={getSortIcon(sortOrder)}
+            size={15}
+          />
+        </DataTable.Title>
         <DataTable.Title
-          sortDirection="ascending"
+          onPress={handleClickSort}
           style={{flex: 2}}
           textStyle={styles.tableHeaderTitle}>
-          Name
+          <Text>Name</Text>
         </DataTable.Title>
         <DataTable.Title textStyle={styles.tableHeaderTitle}>
           Birth
@@ -94,11 +139,11 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
           Species
         </DataTable.Title>
       </DataTable.Header>
-      {loading || localLoading ? (
-        <ActivityIndicator size={'small'} />
-      ) : (
+      {loading ? (
+        <ActivityIndicator style={{marginTop: 10}} size={'small'} />
+      ) : sortedCharacters.length ? (
         <>
-          {characters.map(character => (
+          {sortedCharacters.map(character => (
             <TableRow
               onPressCharacter={handleClickCharacter}
               isFavorite={isFanCharacter(character.id)}
@@ -111,20 +156,21 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
             page={page}
             numberOfPages={Math.ceil(totalCount! / itemsPerPage)}
             onPageChange={page => {
-              setPage(page);
-              setLocalLoading(true);
+              dispatch(setCurrentPage(page));
             }}
             label={`${from + 1}-${to} of ${totalCount}`}
             numberOfItemsPerPage={itemsPerPage}
             showFastPaginationControls
           />
         </>
+      ) : (
+        <Text style={{marginTop: 10}} variant="titleLarge">
+          There aren't any results for you
+        </Text>
       )}
     </DataTable>
   );
 };
-
-export default CharactersTable;
 
 const styles = StyleSheet.create({
   loaderWrapper: {

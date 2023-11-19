@@ -4,15 +4,16 @@ import {
   Divider,
   IconButton,
 } from 'react-native-paper';
-
 import React, {useEffect, useState} from 'react';
-import {Character} from '../../models/Character';
 import {StyleSheet} from 'react-native';
+
+import {CharacterModel} from '../../models/character.model';
+
 import {swapiService} from '../../services/swapi.service';
 
 interface TableRowProps {
   isFavorite: boolean;
-  character: Character;
+  character: CharacterModel;
   onPressCharacter: (id: string) => void;
   onPressFavorite: (id: string) => void;
 }
@@ -25,7 +26,7 @@ const TableRow: React.FC<TableRowProps> = ({
 }) => {
   const [homeworld, setHomeworld] = useState('');
   const [specie, setSpecie] = useState<string | null>(null);
-  const loadAdditionalProperties = async (character: Character) => {
+  const loadAdditionalProperties = async (character: CharacterModel) => {
     const {data: homeworld} = await swapiService.getPlanetById(
       character.homeworld,
     );
