@@ -6,13 +6,14 @@ import {
   Searchbar,
 } from 'react-native-paper';
 import {StyleSheet} from 'react-native';
-import {Character} from '../models/Character';
-import TableRow from './characters-table/TableRow';
-import {useAppDispatch, useAppSelector} from '../hooks/redux.hook';
-import {addFun} from '../redux/fans';
-import {fetchAllPeoples, getCharactersState} from '../redux/characters';
-import { useEffect, useMemo, useState} from 'react';
+import {Character} from '../../models/Character';
+import TableRow from './TableRow';
+import {useAppDispatch, useAppSelector} from '../../hooks/redux.hook';
+import {addFun} from '../../redux/fans';
+import {fetchAllPeoples, getCharactersState} from '../../redux/characters';
+import {useEffect, useMemo, useState} from 'react';
 import debounce from 'lodash/debounce';
+import {useNavigation} from '@react-navigation/native';
 
 interface CharactersTableProps {
   fans: Character[];
@@ -24,6 +25,11 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
   const dispatch = useAppDispatch();
   const [page, setPage] = React.useState<number>(0);
   const [localLoading, setLocalLoading] = useState(true);
+  const navigation = useNavigation();
+
+  const handleClickCharacter = (characterId: string) => {
+    navigation.navigate('CharacterDetails' as never, {characterId} as never);
+  };
 
   const isFanCharacter = (id: string) => {
     return fans.some(el => el.id === id);
@@ -35,9 +41,9 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
   const to = Math.min((page + 1) * itemsPerPage, totalCount!);
 
   const handlePressFavorite = (id: string) => {
-    const character = characters.find(character => character.id === id);
+    const fun = characters.find(character => character.id === id);
 
-    dispatch(addFun(character));
+    dispatch(addFun(fun));
   };
 
   const debouncedFetchAllPeoples = useMemo(
@@ -94,6 +100,7 @@ const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
         <>
           {characters.map(character => (
             <TableRow
+              onPressCharacter={handleClickCharacter}
               isFavorite={isFanCharacter(character.id)}
               key={character.id}
               onPressFavorite={handlePressFavorite}

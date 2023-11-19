@@ -17,7 +17,9 @@ export interface CharacterResponse {
   url: string;
 }
 
-export type Character = Pick<
+export type Character = Omit<
   CharacterResponse,
-  'name' | 'gender' | 'homeworld' | 'species' | 'birth_year'
-> & {id: string};
+  'edited' | 'created' | 'url'
+> & {
+  id: string;
+};

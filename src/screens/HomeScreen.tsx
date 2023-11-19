@@ -1,11 +1,9 @@
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useEffect} from 'react';
-import {Button, Searchbar, Text, useTheme} from 'react-native-paper';
-import {fetchAllPeoples, getCharactersState} from '../redux/characters';
+import {Button, Text, useTheme} from 'react-native-paper';
 import {useAppDispatch, useAppSelector} from '../hooks/redux.hook';
 import FansCard from '../components/FansCard';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import CharactersTable from '../components/CharactersTable';
+import CharactersTable from '../components/characters-table/CharactersTable';
 import {getFansState} from '../redux/fans/fans.selector';
 import {getCharactersByGender} from '../utils/characters.util';
 import {clearFans} from '../redux/fans';

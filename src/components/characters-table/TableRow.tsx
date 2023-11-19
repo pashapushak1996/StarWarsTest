@@ -13,6 +13,7 @@ import {swapiService} from '../../services/swapi.service';
 interface TableRowProps {
   isFavorite: boolean;
   character: Character;
+  onPressCharacter: (id: string) => void;
   onPressFavorite: (id: string) => void;
 }
 
@@ -20,6 +21,7 @@ const TableRow: React.FC<TableRowProps> = ({
   isFavorite,
   character,
   onPressFavorite,
+  onPressCharacter,
 }) => {
   const [homeworld, setHomeworld] = useState('');
   const [specie, setSpecie] = useState<string | null>(null);
@@ -47,7 +49,10 @@ const TableRow: React.FC<TableRowProps> = ({
 
   return (
     <>
-      <DataTable.Row>
+      <DataTable.Row
+        onPress={() => {
+          onPressCharacter(character.id);
+        }}>
         <DataTable.Cell>
           <IconButton
             onPress={() => {
