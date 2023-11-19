@@ -1,10 +1,10 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {swapiService} from '../../services/swapi.service';
-import {PeopleRequest} from '../../models/api.model';
+import {QueryParams} from '../../models/api.model';
 
 export const fetchAllPeoples = createAsyncThunk(
   'characters/fetchAll',
-  async (queryParams: PeopleRequest, {rejectWithValue}) => {
+  async (queryParams: QueryParams, {rejectWithValue}) => {
     try {
       const response = await swapiService.getCharacters(queryParams);
 

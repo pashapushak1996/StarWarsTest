@@ -4,7 +4,7 @@ import {
   DataTable,
   IconButton,
   Searchbar,
-  Text,
+  Text
 } from 'react-native-paper';
 import {StyleSheet} from 'react-native';
 import {useEffect, useMemo, useState} from 'react';
@@ -27,11 +27,14 @@ export const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-
   const {loading, characters, totalCount, page} =
     useAppSelector(getCharactersState);
-
   const [searchValue, setSearchValue] = useState('');
+
+  const itemsPerPage = 10;
+
+  const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, totalCount!);
 
   const handleClickCharacter = (characterId: string) => {
     navigation.navigate('CharacterDetails' as never, {characterId} as never);
@@ -40,11 +43,6 @@ export const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
   const isFanCharacter = (id: string) => {
     return fans.some(el => el.id === id);
   };
-
-  const itemsPerPage = 10;
-
-  const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, totalCount!);
 
   const handlePressFavorite = (id: string) => {
     const fun = characters.find(character => character.id === id);
@@ -72,18 +70,6 @@ export const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
     dispatch(setCurrentPage(0));
   }, [totalCount]);
 
-  const sortedCharacters = sortOrder
-    ? [...characters].sort((a, b) => {
-        if (a.name < b.name) {
-          return sortOrder === 'asc' ? -1 : 1;
-        }
-        if (a.name > b.name) {
-          return sortOrder === 'asc' ? 1 : -1;
-        }
-        return 0;
-      })
-    : [...characters];
-
   const handleClickSort = () => {
     setSortOrder(prevState =>
       prevState === undefined || prevState === 'desc' ? 'asc' : 'desc',
@@ -100,6 +86,18 @@ export const CharactersTable: React.FC<CharactersTableProps> = ({fans}) => {
         return 'arrow-collapse';
     }
   };
+
+  const sortedCharacters = sortOrder
+    ? [...characters].sort((a, b) => {
+        if (a.name < b.name) {
+          return sortOrder === 'asc' ? -1 : 1;
+        }
+        if (a.name > b.name) {
+          return sortOrder === 'asc' ? 1 : -1;
+        }
+        return 0;
+      })
+    : [...characters];
 
   return (
     <DataTable>
